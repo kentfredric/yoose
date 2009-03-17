@@ -16,7 +16,8 @@ sub hash_cast {
         if ( Scalar::Util::blessed($entity) ) {
             return $entity if $entity->isa($class);
             Carp::confess(
-                'The given entity is of a class different to that required ( Want: '. $class );
+'The given entity is of a class different to that required ( Want: '
+                  . $class );
         }
         if ( ref $entity ne 'HASH' ) {
             Carp::croak('The given entity is not a hash like expected');

@@ -12,9 +12,9 @@ requires 'purify_rule';
 
 sub _purify_expand {
     my ( $self, $rule, $rulename ) = @_;
-    Yoose::Assertions::Object_has_property( $self, $rulename,
+    Yoose::Assertions::object_has_property( $self, $rulename,
         'Cant apply rules with no property to apply them on' );
-    Yoose::Assertions::Object_has_property( $rule, 'target',
+    Yoose::Assertions::object_has_property( $rule, 'target',
         'Cannot cast into something without a something to cast into' );
 
     $rule->{list_rule}     //= 'Hash';

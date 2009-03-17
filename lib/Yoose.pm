@@ -28,7 +28,7 @@ sub _open_spec {
     my $self = shift;
     $self->{__spec} //= do {
         my $newspec = MooseX::YAML::LoadFile( $self->spec->stringify );
-        Yoose::Assertions::YAML_is_valid_Yoose($newspec);
+        Yoose::Assertions::yaml_is_valid_Yoose($newspec);
         $newspec;
     };
     return $self->{__spec};
