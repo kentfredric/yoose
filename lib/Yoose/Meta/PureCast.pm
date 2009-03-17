@@ -1,12 +1,16 @@
 package Yoose::Meta::PureCast;
 
+# $Id:$
 use Moose::Role;
 use Yoose::Utils      ();
 use Carp              ();
 use Scalar::Util      ();
 use Yoose::Assertions ();
+use version           ();
 
 use namespace::clean -except => [qw( meta requires )];
+
+our ($VERSION) = version::qv('0.1');
 
 requires 'purify_rule';
 
@@ -36,6 +40,7 @@ sub _purify_hash_hash {
         next if not $data->{$item}->can('purify');
         $data->{$item}->purify();
     }
+    return 1;
 }
 
 sub purify {

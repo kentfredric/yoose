@@ -11,8 +11,8 @@ use Carp          ();
 use namespace::clean;
 
 our ($VERSION) = version::qv('0.1');
-
-sub yaml_is_valid_Yoose($) {
+## no critic ( SubroutinePrototypes )
+sub yaml_is_valid_yoose($) {
     my $yaml = shift @_;
     object_is_bless( $yaml, Yoose::Errors::yaml_was_not_blessed );
     object_is_blessed( $yaml, 'Yoose::Spec',
@@ -53,6 +53,14 @@ sub object_is_bless($$) {
     my $reason = shift;
     unless ( Scalar::Util::blessed($object) ) {
         Carp::confess Yoose::Errors::object_is_bless($reason);
+    }
+    return 1;
+}
+
+sub ref_is_hash($) {
+    my $object = shift;
+    unless ( ref $object eq 'HASH' ) {
+        Carp::confess Yoose::Errors::ref_is_not_hash;
     }
 }
 1;

@@ -28,7 +28,7 @@ sub _open_spec {
     my $self = shift;
     $self->{__spec} //= do {
         my $newspec = MooseX::YAML::LoadFile( $self->spec->stringify );
-        Yoose::Assertions::yaml_is_valid_Yoose($newspec);
+        Yoose::Assertions::yaml_is_valid_yoose($newspec);
         $newspec;
     };
     return $self->{__spec};
@@ -46,16 +46,18 @@ sub print_out {
     my $out = shift // *STDOUT;
 
     # $out is an optional parameter that specifies the output device;
-    print $out YAML::XS::Dump( $self->_open_spec->purify );
+    print {$out} YAML::XS::Dump( $self->_open_spec->purify );
     return;
 }
 
 sub load {
-    shift->_open_spec->create;
+    return shift->_open_spec->create;
 }
 1;
 
 __END__
+
+=for stopwords Yoose YAML ClassSpec AttributeSpec schemas 
 
 =head1 Description 
 
@@ -66,7 +68,7 @@ a simple way to organise specifications for structured data.
 Generally, you create a Yoose Specification, which implements a class structure, and then use that 
 Yoose Specification to load and validate other YAML files which contain data.
 
-Its basically lots like XML-Schemas in XML, except its for YAML instead.
+Its basically lots like XML - schemas in XML, except its for YAML instead.
 
 Additionally, Yoose is backed entirely by Moose, so Yoose specifications are 100% declarative 
 Moose specifications. 
@@ -77,7 +79,7 @@ Moose specifications.
 
 =item spec => Path::Class::File
 
-The Path to a YAML file containing the class specificiations.
+The Path to a YAML file containing the class specifications.
 
 =back
 

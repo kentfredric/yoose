@@ -9,6 +9,7 @@ use namespace::clean;
 
 our ($VERSION) = version::qv('0.1');
 
+## no critic ( SubroutinePrototypes )
 sub yaml_was_not_blessed() {
     'YAML File was not an Object, expected !!perl/hash:Yoose::Spec';
 }
@@ -33,6 +34,10 @@ sub object_is_bless($) {
 
 sub object_is_blessed($$) {
     sprintf 'The Given Object was not of type "%s"( reason: "%s" )', @_;
+}
+
+sub ref_is_not_hash() {
+    'The reference specified does not point to a "hash" ';
 }
 1;
 
