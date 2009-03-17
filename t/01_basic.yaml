@@ -1,0 +1,14 @@
+--- !!perl/hash:Yoose::Spec
+Extras: &Foo
+- Foo:
+  - Quux
+- Bar
+- Baz
+classes:
+  Page:
+    has:
+      size: *Foo
+  Section:
+    has: 
+      weight: *Foo
+
