@@ -102,9 +102,9 @@ my @t = ();
     has alpha => (
         isa     => 'HashRef',
         is      => 'rw',
-        default => sub { {
-            key => 'value',
-        } },
+        default => sub {
+            { key => 'value', };
+        },
     );
 
     sub purify_rule {
@@ -123,9 +123,9 @@ my @t = ();
     has alpha => (
         isa     => 'HashRef',
         is      => 'rw',
-        default => sub { {
-            key => ( bless {}, 'UNIVERSAL'),
-        } },
+        default => sub {
+            { key => ( bless {}, 'UNIVERSAL' ), };
+        },
     );
 
     sub purify_rule {
@@ -144,9 +144,9 @@ my @t = ();
     has alpha => (
         isa     => 'HashRef',
         is      => 'rw',
-        default => sub { {
-            key => {},
-        } },
+        default => sub {
+            { key => {}, };
+        },
     );
 
     sub purify_rule {
@@ -165,9 +165,9 @@ my @t = ();
     has alpha => (
         isa     => 'HashRef',
         is      => 'rw',
-        default => sub { {
-            key => ( bless {}, 'Test_Init'),
-        } },
+        default => sub {
+            { key => ( bless {}, 'Test_Init' ), };
+        },
     );
 
     sub purify_rule {
