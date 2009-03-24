@@ -2,9 +2,18 @@
 use strict;
 use warnings;
 
-use Test::More;    # last test to print
+use Test::More;
 use Test::Exception;
 
+# This File Contains 1 Package per test-unit.
+# Each test unit tests that
+#   a) an instance of the class can be created
+#   b) instance->purify() works
+#
+# The expected Fail Status is controlled by ->fails()
+#   0 being "XPass"
+#   1 being "XFail"
+#
 my @t = ();
 {
 
@@ -176,6 +185,9 @@ my @t = ();
     sub fails { return 0; }
     push @t, __PACKAGE__;
 }
+
+# -- End Tests
+# -- Run Tests
 
 plan tests => ( scalar @t ) * 2;
 for (@t) {
