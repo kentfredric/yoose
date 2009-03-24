@@ -34,17 +34,17 @@ my @tests = (
     Missing_Attribute => {
         has  => {},
         rule => { alpha => {} },
-        fail => 1,
+        fail => 1,    # the rule applies to an attribute which does not exist
     },
     Missing_TypeCast => {
         has  => { alpha => {qw( isa Str is rw default 1 )}, },
         rule => { alpha => {} },
-        fail => 1,
+        fail => 1,      # the rule doesn't specify what type to cast into
     },
     Bad_Dataset => {
         has  => { alpha => {qw( isa Str is rw default 1 )}, },
         rule => { alpha => { target => 'Test_Init' }, },
-        fail => 1,
+        fail => 1,    # A String cannot be iterated and have its members cast
     },
     Empty_Dataset => {
         has => {
@@ -71,7 +71,7 @@ my @tests = (
             },
         },
         rule => { alpha => { target => 'Test_Init' }, },
-        fail => 1,
+        fail => 1,    # 'value' cannot be cast to an Object
     },
     Bad_DataEntryClass => {
         has => {
@@ -84,7 +84,8 @@ my @tests = (
             },
         },
         rule => { alpha => { target => 'Test_Init' }, },
-        fail => 1,
+        fail => 1
+        , # the entry 'Key' is already cast to something, and its not the expected cast
     },
     Good_DataEntryClass => {
         has => {
@@ -100,16 +101,24 @@ my @tests = (
         fail => 0,
     },
 );
+
+# Create the indices in order
+# And then make it a hash.
 my @testkeys = grep { not ref $_ } @tests;
 my %tests = @tests;
 
 plan tests => ( scalar @testkeys ) * 3;
+
 for my $testname (@testkeys) {
     my $packagename = "Test_" . $testname;
+
+    # Generate the Class with Moose
+
     lives_ok(
         sub {
             my $meta = Moose->init_meta( for_class => $packagename );
 
+            # Add the test data
             for my $attribute ( sort keys %{ $tests{$testname}->{has} } ) {
 
                 Moose::has( $packagename, $attribute,
@@ -117,25 +126,32 @@ for my $testname (@testkeys) {
 
             }
 
+            # Add the rule
             $meta->add_method(
                 purify_rule => sub {
                     return $tests{$testname}->{rule};
                 }
             );
 
+            # Apply the PureCast Role
             Moose::with( $packagename, 'Yoose::Meta::PureCast' );
 
             $meta->make_immutable();
         },
         "Generate Package : $testname"
     );
+
     my $instance;
     lives_ok(
         sub {
+
+            # innstantiate an  instance of the package.
             $instance = $packagename->new();
         },
         "Can Create Instances of Rolified Package: $testname"
     );
+
+    # Execute Purify
 
     if ( $tests{$testname}->{fail} ) {
         dies_ok(
