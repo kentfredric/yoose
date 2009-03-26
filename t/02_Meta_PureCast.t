@@ -4,8 +4,9 @@ use warnings;
 
 use Test::More;
 use Test::Exception;
-
-require Moose;
+use Moose ();
+use Moose::Meta::Class;
+use Moose::Meta::Attribute;
 
 # This File Contains 1 Package per test-unit.
 # Each test unit tests that
@@ -110,33 +111,14 @@ my %tests = @tests;
 plan tests => ( scalar @testkeys ) * 3;
 
 for my $testname (@testkeys) {
-    my $packagename = "Test_" . $testname;
+
+    my $metaclass;
 
     # Generate the Class with Moose
 
     lives_ok(
         sub {
-            my $meta = Moose->init_meta( for_class => $packagename );
-
-            # Add the test data
-            for my $attribute ( sort keys %{ $tests{$testname}->{has} } ) {
-
-                Moose::has( $packagename, $attribute,
-                    %{ $tests{$testname}->{has}->{$attribute} } );
-
-            }
-
-            # Add the rule
-            $meta->add_method(
-                purify_rule => sub {
-                    return $tests{$testname}->{rule};
-                }
-            );
-
-            # Apply the PureCast Role
-            Moose::with( $packagename, 'Yoose::Meta::PureCast' );
-
-            $meta->make_immutable();
+            $metaclass = generatePackage( $tests{$testname} );
         },
         "Generate Package : $testname"
     );
@@ -146,7 +128,7 @@ for my $testname (@testkeys) {
         sub {
 
             # innstantiate an  instance of the package.
-            $instance = $packagename->new();
+            $instance = createInstance($metaclass);
         },
         "Can Create Instances of Rolified Package: $testname"
     );
@@ -157,6 +139,7 @@ for my $testname (@testkeys) {
         dies_ok(
             sub {
                 $instance->purify();
+
             },
             "XFail Purify $testname"
         );
@@ -171,3 +154,28 @@ for my $testname (@testkeys) {
     }
 }
 
+sub generatePackage {
+    my $testconfig = shift;
+    my $metaclass  = Moose::Meta::Class->create_anon_class(
+        roles   => ['Yoose::Meta::PureCast'],
+        cache   => 0,                         # DO NOT CACHE , CACHE HERE == WTF
+        methods => {
+            purify_rule => sub {
+                return $testconfig->{rule};
+            },
+        },
+    );
+    for my $attribute ( sort keys %{ $testconfig->{has} } ) {
+        $metaclass->add_attribute( $attribute,
+            $testconfig->{has}->{$attribute} );
+    }
+
+    $metaclass->calculate_all_roles();
+    $metaclass->make_immutable();
+    return $metaclass;
+}
+
+sub createInstance {
+    my $meta = shift;
+    return $meta->new_object();
+}

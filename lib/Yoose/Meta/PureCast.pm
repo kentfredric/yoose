@@ -54,6 +54,9 @@ sub purify {
                 $rule->{recurse}, );
             next;
         }
+        else {
+            Carp::croak("Rule Combination Impossible/Undefined");
+        }
     }
     return $self;
 }
